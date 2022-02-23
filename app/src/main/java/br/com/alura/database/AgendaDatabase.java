@@ -1,9 +1,12 @@
 package br.com.alura.database;
 
+import android.content.Context;
+
 import androidx.room.Database;
+import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import br.com.alura.database.dao.RoomAlunoDAO;
+import br.com.alura.database.dao.AlunoDAO;
 import br.com.alura.model.Aluno;
 
 @Database(
@@ -13,5 +16,14 @@ import br.com.alura.model.Aluno;
 )
 public abstract class AgendaDatabase extends RoomDatabase {
 
-    public abstract RoomAlunoDAO getRoomAlunoDAO();
+    private static final String NOME_BANCO_DE_DADOS = "agenda.db";
+
+    public abstract AlunoDAO getRoomAlunoDAO();
+
+    public static AgendaDatabase getInstance(Context context) {
+        return Room
+                .databaseBuilder(context, AgendaDatabase.class, NOME_BANCO_DE_DADOS)
+                .allowMainThreadQueries()
+                .build();
+    }
 }
