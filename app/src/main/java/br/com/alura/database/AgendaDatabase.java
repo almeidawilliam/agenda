@@ -14,7 +14,7 @@ import br.com.alura.model.Aluno;
 
 @Database(
         entities = {Aluno.class},
-        version = 2,
+        version = 3,
         exportSchema = false
 )
 public abstract class AgendaDatabase extends RoomDatabase {
@@ -28,12 +28,34 @@ public abstract class AgendaDatabase extends RoomDatabase {
                 .databaseBuilder(context, AgendaDatabase.class, NOME_BANCO_DE_DADOS)
                 .allowMainThreadQueries()
 //                .fallbackToDestructiveMigration()
-                .addMigrations(new Migration(1, 2) {
-                    @Override
-                    public void migrate(@NonNull SupportSQLiteDatabase database) {
-                        database.execSQL("ALTER TABLE aluno ADD COLUMN sobrenome TEXT");
-                    }
-                })
+                .addMigrations(
+                        new Migration(1, 2) {
+                            @Override
+                            public void migrate(@NonNull SupportSQLiteDatabase database) {
+                                database.execSQL("ALTER TABLE aluno ADD COLUMN sobrenome TEXT");
+                            }
+                        },
+                        new Migration(2, 3) {
+                            @Override
+                            public void migrate(@NonNull SupportSQLiteDatabase database) {
+                                database.execSQL(
+                                        "CREATE TABLE IF NOT EXISTS `Aluno_novo` (" +
+                                                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                                                "`nome` TEXT, " +
+                                                "`telefone` TEXT, " +
+                                                "`email` TEXT" +
+                                                ")"
+                                );
+
+                                database.execSQL("INSERT INTO Aluno_novo (id, nome, telefone, email) " +
+                                        "SELECT id, nome, telefone, email FROM Aluno");
+
+                                database.execSQL("DROP TABLE Aluno");
+
+                                database.execSQL("ALTER TABLE Aluno_novo RENAME TO Aluno");
+                            }
+                        }
+                )
                 .build();
     }
 }
