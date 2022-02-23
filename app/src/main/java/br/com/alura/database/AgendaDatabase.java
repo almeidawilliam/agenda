@@ -15,7 +15,7 @@ import br.com.alura.model.Aluno;
 
 @Database(
         entities = {Aluno.class},
-        version = 4,
+        version = 5,
         exportSchema = false
 )
 @TypeConverters({ConversorCalendar.class})
