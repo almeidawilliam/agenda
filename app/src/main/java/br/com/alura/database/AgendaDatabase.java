@@ -2,9 +2,12 @@ package br.com.alura.database;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import br.com.alura.database.dao.AlunoDAO;
 import br.com.alura.model.Aluno;
@@ -25,6 +28,12 @@ public abstract class AgendaDatabase extends RoomDatabase {
                 .databaseBuilder(context, AgendaDatabase.class, NOME_BANCO_DE_DADOS)
                 .allowMainThreadQueries()
 //                .fallbackToDestructiveMigration()
+                .addMigrations(new Migration(1, 2) {
+                    @Override
+                    public void migrate(@NonNull SupportSQLiteDatabase database) {
+                        database.execSQL("ALTER TABLE aluno ADD COLUMN sobrenome TEXT");
+                    }
+                })
                 .build();
     }
 }
