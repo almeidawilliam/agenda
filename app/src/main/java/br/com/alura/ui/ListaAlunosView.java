@@ -25,6 +25,7 @@ public class ListaAlunosView {
         adapter = new ListaAlunosAdapter(this.context);
         this.dao = Room
                 .databaseBuilder(context, AgendaDatabase.class, "agenda.db")
+                .allowMainThreadQueries()
                 .build()
                 .getRoomAlunoDAO();
     }
@@ -49,7 +50,7 @@ public class ListaAlunosView {
     }
 
     private void remove(Aluno aluno) {
-        dao.remove(aluno.getId());
+        dao.remove(aluno);
         adapter.remove(aluno);
     }
 

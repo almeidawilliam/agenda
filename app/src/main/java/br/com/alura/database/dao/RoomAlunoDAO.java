@@ -19,5 +19,5 @@ public interface RoomAlunoDAO {
     List<Aluno> todos();
 
     @Delete
-    void remove(int id);
+    void remove(Aluno aluno);
 }
