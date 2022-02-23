@@ -11,7 +11,7 @@ import br.com.alura.model.Aluno;
 
 @Database(
         entities = {Aluno.class},
-        version = 1,
+        version = 2,
         exportSchema = false
 )
 public abstract class AgendaDatabase extends RoomDatabase {
