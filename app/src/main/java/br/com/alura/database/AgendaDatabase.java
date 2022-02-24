@@ -32,7 +32,7 @@ public abstract class AgendaDatabase extends RoomDatabase {
     public static AgendaDatabase getInstance(Context context) {
         return Room
                 .databaseBuilder(context, AgendaDatabase.class, NOME_BANCO_DE_DADOS)
-                .allowMainThreadQueries()
+//                .allowMainThreadQueries()
 //                .fallbackToDestructiveMigration()
                 .addMigrations(TODAS_MIGRATIONS)
                 .build();

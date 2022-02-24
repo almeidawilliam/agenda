@@ -12,6 +12,7 @@ import br.com.alura.database.AgendaDatabase;
 import br.com.alura.database.dao.AlunoDAO;
 import br.com.alura.model.Aluno;
 import br.com.alura.ui.activity.adapter.ListaAlunosAdapter;
+import br.com.alura.ui.asynctask.BuscaAlunosTask;
 
 public class ListaAlunosView {
 
@@ -41,7 +42,7 @@ public class ListaAlunosView {
     }
 
     public void atualizaAlunos() {
-        adapter.atualiza(dao.todos());
+        new BuscaAlunosTask(dao, adapter).execute();
     }
 
     private void remove(Aluno aluno) {
