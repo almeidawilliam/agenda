@@ -14,7 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import br.com.alura.R;
 import br.com.alura.database.AgendaDatabase;
 import br.com.alura.database.dao.AlunoDAO;
+import br.com.alura.database.dao.TelefoneDAO;
 import br.com.alura.model.Aluno;
+import br.com.alura.model.Telefone;
+import br.com.alura.model.TipoTelefone;
 
 public class FormularioAlunoActivity extends AppCompatActivity {
 
@@ -24,14 +27,17 @@ public class FormularioAlunoActivity extends AppCompatActivity {
     private EditText campoTelefoneFixo;
     private EditText campoTelefoneCelular;
     private EditText campoEmail;
-    private AlunoDAO dao;
+    private AlunoDAO daoAluno;
+    private TelefoneDAO daoTelefone;
     private Aluno aluno;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formulario_aluno);
-        dao = AgendaDatabase.getInstance(this).getAlunoDAO();
+        AgendaDatabase database = AgendaDatabase.getInstance(this);
+        daoAluno = database.getAlunoDAO();
+        daoTelefone = database.getTelefoneDAO();
         inicializacaoDosCampos();
         carregaAluno();
     }
@@ -73,9 +79,17 @@ public class FormularioAlunoActivity extends AppCompatActivity {
     private void finalizaFormulario() {
         preencheAluno();
         if (aluno.temIdValido()) {
-            dao.edita(aluno);
+            daoAluno.edita(aluno);
         } else {
-            dao.salva(aluno);
+            Long idAlunoSalvo = daoAluno.salva(aluno);
+
+            String numeroFixo = campoTelefoneFixo.getText().toString();
+            String numeroCelular = campoTelefoneCelular.getText().toString();
+
+            Telefone telefoneFixo = new Telefone(numeroFixo, TipoTelefone.FIXO, idAlunoSalvo.intValue());
+            Telefone telefoneCelular = new Telefone(numeroCelular, TipoTelefone.CELULAR, idAlunoSalvo.intValue());
+
+            daoTelefone.salva(telefoneFixo, telefoneCelular);
         }
         finish();
     }

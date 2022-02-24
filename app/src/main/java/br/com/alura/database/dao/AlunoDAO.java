@@ -14,7 +14,7 @@ import br.com.alura.model.Aluno;
 public interface AlunoDAO {
 
     @Insert
-    void salva(Aluno aluno);
+    Long salva(Aluno aluno);
 
     @Query("SELECT * FROM ALUNO")
     List<Aluno> todos();

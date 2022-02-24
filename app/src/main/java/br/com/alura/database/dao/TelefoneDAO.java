@@ -1,6 +1,7 @@
 package br.com.alura.database.dao;
 
 import androidx.room.Dao;
+import androidx.room.Insert;
 import androidx.room.Query;
 
 import br.com.alura.model.Telefone;
@@ -12,4 +13,7 @@ public interface TelefoneDAO {
             "WHERE t.idAluno = :idAluno " +
             "LIMIT 1")
     Telefone buscaPrimeiroTelefoneDoAluno(int idAluno);
+
+    @Insert
+    void salva(Telefone... telefones);
 }
