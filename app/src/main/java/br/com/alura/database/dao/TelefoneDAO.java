@@ -3,6 +3,9 @@ package br.com.alura.database.dao;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
+
+import java.util.List;
 
 import br.com.alura.model.Telefone;
 
@@ -16,4 +19,11 @@ public interface TelefoneDAO {
 
     @Insert
     void salva(Telefone... telefones);
+
+    @Query("SELECT * FROM Telefone t " +
+            "WHERE t.idAluno = :idAluno ")
+    List<Telefone> buscaTodosTelefonesDoAluno(int idAluno);
+
+    @Update
+    void atualiza(List<Telefone> telefones);
 }

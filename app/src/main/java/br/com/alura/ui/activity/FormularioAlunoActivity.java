@@ -11,6 +11,8 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.List;
+
 import br.com.alura.R;
 import br.com.alura.database.AgendaDatabase;
 import br.com.alura.database.dao.AlunoDAO;
@@ -30,6 +32,7 @@ public class FormularioAlunoActivity extends AppCompatActivity {
     private AlunoDAO daoAluno;
     private TelefoneDAO daoTelefone;
     private Aluno aluno;
+    private List<Telefone> telefonesDoAluno;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,15 +74,31 @@ public class FormularioAlunoActivity extends AppCompatActivity {
 
     private void preencheCampos() {
         campoNome.setText(aluno.getNome());
-//        campoTelefoneFixo.setText(aluno.getTelefoneFixo());
-//        campoTelefoneCelular.setText(aluno.getTelefoneCelular());
         campoEmail.setText(aluno.getEmail());
+        telefonesDoAluno = daoTelefone.buscaTodosTelefonesDoAluno(aluno.getId());
+
+        for (Telefone telefone : telefonesDoAluno) {
+            if (telefone.getTipo() == TipoTelefone.FIXO) {
+                campoTelefoneFixo.setText(telefone.getNumero());
+            } else {
+                campoTelefoneCelular.setText(telefone.getNumero());
+            }
+        }
     }
 
     private void finalizaFormulario() {
         preencheAluno();
         if (aluno.temIdValido()) {
             daoAluno.edita(aluno);
+
+            for (Telefone telefone : telefonesDoAluno) {
+                if (telefone.getTipo() == TipoTelefone.FIXO) {
+                    telefone.setNumero(campoTelefoneFixo.getText().toString());
+                } else {
+                    telefone.setNumero(campoTelefoneCelular.getText().toString());
+                }
+                daoTelefone.atualiza(telefonesDoAluno);
+            }
         } else {
             Long idAlunoSalvo = daoAluno.salva(aluno);
 
