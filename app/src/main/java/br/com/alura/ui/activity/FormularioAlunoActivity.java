@@ -75,6 +75,10 @@ public class FormularioAlunoActivity extends AppCompatActivity {
     private void preencheCampos() {
         campoNome.setText(aluno.getNome());
         campoEmail.setText(aluno.getEmail());
+        preencheCamposDeTelefone();
+    }
+
+    private void preencheCamposDeTelefone() {
         telefonesDoAluno = daoTelefone.buscaTodosTelefonesDoAluno(aluno.getId());
 
         for (Telefone telefone : telefonesDoAluno) {
@@ -88,35 +92,44 @@ public class FormularioAlunoActivity extends AppCompatActivity {
 
     private void finalizaFormulario() {
         preencheAluno();
+        Telefone telefoneFixo = new Telefone(campoTelefoneFixo.getText().toString(), TipoTelefone.FIXO);
+        Telefone telefoneCelular = new Telefone(campoTelefoneCelular.getText().toString(), TipoTelefone.CELULAR);
+
         if (aluno.temIdValido()) {
-            daoAluno.edita(aluno);
-
-            String numeroFixo = campoTelefoneFixo.getText().toString();
-            String numeroCelular = campoTelefoneCelular.getText().toString();
-
-            Telefone telefoneFixo = new Telefone(numeroFixo, TipoTelefone.FIXO, aluno.getId());
-            Telefone telefoneCelular = new Telefone(numeroCelular, TipoTelefone.CELULAR, aluno.getId());
-
-            for (Telefone telefone : telefonesDoAluno) {
-                if (telefone.getTipo() == TipoTelefone.FIXO) {
-                    telefoneFixo.setId(telefone.getId());
-                } else {
-                    telefoneCelular.setId(telefoneCelular.getId());
-                }
-            }
-            daoTelefone.atualiza(telefoneFixo, telefoneCelular);
+            editaAluno(telefoneFixo, telefoneCelular);
         } else {
-            Long idAlunoSalvo = daoAluno.salva(aluno);
-
-            String numeroFixo = campoTelefoneFixo.getText().toString();
-            String numeroCelular = campoTelefoneCelular.getText().toString();
-
-            Telefone telefoneFixo = new Telefone(numeroFixo, TipoTelefone.FIXO, idAlunoSalvo.intValue());
-            Telefone telefoneCelular = new Telefone(numeroCelular, TipoTelefone.CELULAR, idAlunoSalvo.intValue());
-
-            daoTelefone.salva(telefoneFixo, telefoneCelular);
+            salvaAluno(telefoneFixo, telefoneCelular);
         }
         finish();
+    }
+
+    private void salvaAluno(Telefone telefoneFixo, Telefone telefoneCelular) {
+        Long idAlunoSalvo = daoAluno.salva(aluno);
+        vinculaAlunoComTelefone(idAlunoSalvo.intValue(), telefoneFixo, telefoneCelular);
+        daoTelefone.salva(telefoneFixo, telefoneCelular);
+    }
+
+    private void editaAluno(Telefone telefoneFixo, Telefone telefoneCelular) {
+        daoAluno.edita(aluno);
+        vinculaAlunoComTelefone(aluno.getId(), telefoneFixo, telefoneCelular);
+        atualizaIdsDosTelefones(telefoneFixo, telefoneCelular);
+        daoTelefone.atualiza(telefoneFixo, telefoneCelular);
+    }
+
+    private void atualizaIdsDosTelefones(Telefone telefoneFixo, Telefone telefoneCelular) {
+        for (Telefone telefone : telefonesDoAluno) {
+            if (telefone.getTipo() == TipoTelefone.FIXO) {
+                telefoneFixo.setId(telefone.getId());
+            } else {
+                telefoneCelular.setId(telefoneCelular.getId());
+            }
+        }
+    }
+
+    private void vinculaAlunoComTelefone(int idAlunoSalvo, Telefone... telefones) {
+        for (Telefone telefone : telefones) {
+            telefone.setIdAluno(idAlunoSalvo);
+        }
     }
 
     private void inicializacaoDosCampos() {
@@ -128,13 +141,9 @@ public class FormularioAlunoActivity extends AppCompatActivity {
 
     private void preencheAluno() {
         String nome = campoNome.getText().toString();
-        String telefoneFixo = campoTelefoneFixo.getText().toString();
-        String telefoneCelular = campoTelefoneCelular.getText().toString();
         String email = campoEmail.getText().toString();
 
         aluno.setNome(nome);
-//        aluno.setTelefoneFixo(telefoneFixo);
-//        aluno.setTelefoneCelular(telefoneCelular);
         aluno.setEmail(email);
     }
 }
