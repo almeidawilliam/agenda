@@ -2,8 +2,8 @@ package br.com.alura.database.dao;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import androidx.room.Update;
 
 import java.util.List;
 
@@ -24,6 +24,6 @@ public interface TelefoneDAO {
             "WHERE t.idAluno = :idAluno ")
     List<Telefone> buscaTodosTelefonesDoAluno(int idAluno);
 
-    @Update
-    void atualiza(List<Telefone> telefones);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void atualiza(Telefone... telefones);
 }

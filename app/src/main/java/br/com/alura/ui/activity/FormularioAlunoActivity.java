@@ -91,14 +91,20 @@ public class FormularioAlunoActivity extends AppCompatActivity {
         if (aluno.temIdValido()) {
             daoAluno.edita(aluno);
 
+            String numeroFixo = campoTelefoneFixo.getText().toString();
+            String numeroCelular = campoTelefoneCelular.getText().toString();
+
+            Telefone telefoneFixo = new Telefone(numeroFixo, TipoTelefone.FIXO, aluno.getId());
+            Telefone telefoneCelular = new Telefone(numeroCelular, TipoTelefone.CELULAR, aluno.getId());
+
             for (Telefone telefone : telefonesDoAluno) {
                 if (telefone.getTipo() == TipoTelefone.FIXO) {
-                    telefone.setNumero(campoTelefoneFixo.getText().toString());
+                    telefoneFixo.setId(telefone.getId());
                 } else {
-                    telefone.setNumero(campoTelefoneCelular.getText().toString());
+                    telefoneCelular.setId(telefoneCelular.getId());
                 }
-                daoTelefone.atualiza(telefonesDoAluno);
             }
+            daoTelefone.atualiza(telefoneFixo, telefoneCelular);
         } else {
             Long idAlunoSalvo = daoAluno.salva(aluno);
 
