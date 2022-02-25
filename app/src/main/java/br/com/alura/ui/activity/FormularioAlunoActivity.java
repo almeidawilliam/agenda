@@ -21,6 +21,7 @@ import br.com.alura.model.Aluno;
 import br.com.alura.model.Telefone;
 import br.com.alura.model.TipoTelefone;
 import br.com.alura.ui.asynctask.BuscaTodosTelefonesDoAlunoTask;
+import br.com.alura.ui.asynctask.EditaAlunoTask;
 import br.com.alura.ui.asynctask.SalvaAlunoTask;
 
 public class FormularioAlunoActivity extends AppCompatActivity {
@@ -106,30 +107,16 @@ public class FormularioAlunoActivity extends AppCompatActivity {
     }
 
     private void salvaAluno(Telefone telefoneFixo, Telefone telefoneCelular) {
-        new SalvaAlunoTask(daoAluno, daoTelefone, aluno, telefoneFixo, telefoneCelular, this::finish).execute();
+        new SalvaAlunoTask(daoAluno, daoTelefone, aluno,
+                telefoneFixo, telefoneCelular, this::finish)
+                .execute();
     }
 
     private void editaAluno(Telefone telefoneFixo, Telefone telefoneCelular) {
-        daoAluno.edita(aluno);
-        vinculaAlunoComTelefone(aluno.getId(), telefoneFixo, telefoneCelular);
-        atualizaIdsDosTelefones(telefoneFixo, telefoneCelular);
-        daoTelefone.atualiza(telefoneFixo, telefoneCelular);
-    }
+        new EditaAlunoTask(daoAluno, daoTelefone, aluno, telefoneFixo,
+                telefoneCelular, telefonesDoAluno, this::finish)
+                .execute();
 
-    private void atualizaIdsDosTelefones(Telefone telefoneFixo, Telefone telefoneCelular) {
-        for (Telefone telefone : telefonesDoAluno) {
-            if (telefone.getTipo() == TipoTelefone.FIXO) {
-                telefoneFixo.setId(telefone.getId());
-            } else {
-                telefoneCelular.setId(telefoneCelular.getId());
-            }
-        }
-    }
-
-    private void vinculaAlunoComTelefone(int idAlunoSalvo, Telefone... telefones) {
-        for (Telefone telefone : telefones) {
-            telefone.setIdAluno(idAlunoSalvo);
-        }
     }
 
     private void inicializacaoDosCampos() {
