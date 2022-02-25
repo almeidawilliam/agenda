@@ -20,6 +20,7 @@ import br.com.alura.database.dao.TelefoneDAO;
 import br.com.alura.model.Aluno;
 import br.com.alura.model.Telefone;
 import br.com.alura.model.TipoTelefone;
+import br.com.alura.ui.asynctask.BuscaTodosTelefonesDoAlunoTask;
 import br.com.alura.ui.asynctask.SalvaAlunoTask;
 
 public class FormularioAlunoActivity extends AppCompatActivity {
@@ -80,15 +81,16 @@ public class FormularioAlunoActivity extends AppCompatActivity {
     }
 
     private void preencheCamposDeTelefone() {
-        telefonesDoAluno = daoTelefone.buscaTodosTelefonesDoAluno(aluno.getId());
-
-        for (Telefone telefone : telefonesDoAluno) {
-            if (telefone.getTipo() == TipoTelefone.FIXO) {
-                campoTelefoneFixo.setText(telefone.getNumero());
-            } else {
-                campoTelefoneCelular.setText(telefone.getNumero());
+        new BuscaTodosTelefonesDoAlunoTask(daoTelefone, aluno, telefones -> {
+            this.telefonesDoAluno = telefones;
+            for (Telefone telefone : telefonesDoAluno) {
+                if (telefone.getTipo() == TipoTelefone.FIXO) {
+                    campoTelefoneFixo.setText(telefone.getNumero());
+                } else {
+                    campoTelefoneCelular.setText(telefone.getNumero());
+                }
             }
-        }
+        }).execute();
     }
 
     private void finalizaFormulario() {
