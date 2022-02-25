@@ -20,6 +20,7 @@ import br.com.alura.database.dao.TelefoneDAO;
 import br.com.alura.model.Aluno;
 import br.com.alura.model.Telefone;
 import br.com.alura.model.TipoTelefone;
+import br.com.alura.ui.asynctask.SalvaAlunoTask;
 
 public class FormularioAlunoActivity extends AppCompatActivity {
 
@@ -100,13 +101,10 @@ public class FormularioAlunoActivity extends AppCompatActivity {
         } else {
             salvaAluno(telefoneFixo, telefoneCelular);
         }
-        finish();
     }
 
     private void salvaAluno(Telefone telefoneFixo, Telefone telefoneCelular) {
-        Long idAlunoSalvo = daoAluno.salva(aluno);
-        vinculaAlunoComTelefone(idAlunoSalvo.intValue(), telefoneFixo, telefoneCelular);
-        daoTelefone.salva(telefoneFixo, telefoneCelular);
+        new SalvaAlunoTask(daoAluno, daoTelefone, aluno, telefoneFixo, telefoneCelular, this::finish).execute();
     }
 
     private void editaAluno(Telefone telefoneFixo, Telefone telefoneCelular) {

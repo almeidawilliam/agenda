@@ -58,7 +58,7 @@ public class ListaAlunosAdapter extends BaseAdapter {
                 dao,
                 aluno.getId(),
                 telefoneEncontrado -> telefone.setText(telefoneEncontrado.getNumero())
-        );
+        ).execute();
     }
 
     private View criaView(ViewGroup viewGroup) {
