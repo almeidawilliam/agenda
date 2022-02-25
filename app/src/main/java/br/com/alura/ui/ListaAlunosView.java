@@ -13,6 +13,7 @@ import br.com.alura.database.dao.AlunoDAO;
 import br.com.alura.model.Aluno;
 import br.com.alura.ui.activity.adapter.ListaAlunosAdapter;
 import br.com.alura.ui.asynctask.BuscaAlunosTask;
+import br.com.alura.ui.asynctask.RemoveAlunoTask;
 
 public class ListaAlunosView {
 
@@ -46,8 +47,7 @@ public class ListaAlunosView {
     }
 
     private void remove(Aluno aluno) {
-        dao.remove(aluno);
-        adapter.remove(aluno);
+        new RemoveAlunoTask(dao, adapter, aluno).execute();
     }
 
     public void configuraAdapter(ListView listaDeAlunos) {
