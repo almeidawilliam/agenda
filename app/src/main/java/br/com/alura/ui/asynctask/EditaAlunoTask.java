@@ -1,7 +1,5 @@
 package br.com.alura.ui.asynctask;
 
-import android.os.AsyncTask;
-
 import java.util.List;
 
 import br.com.alura.database.dao.AlunoDAO;
@@ -10,7 +8,7 @@ import br.com.alura.model.Aluno;
 import br.com.alura.model.Telefone;
 import br.com.alura.model.TipoTelefone;
 
-public class EditaAlunoTask extends AsyncTask<Void, Void, Void> {
+public class EditaAlunoTask extends BaseAlunoComTelefoneTask {
 
     private final AlunoDAO daoAluno;
     private final TelefoneDAO daoTelefone;
@@ -18,21 +16,20 @@ public class EditaAlunoTask extends AsyncTask<Void, Void, Void> {
     private final Telefone telefoneFixo;
     private final Telefone telefoneCelular;
     private List<Telefone> telefonesDoAluno;
-    private AlunoEditadoListener listener;
 
     public EditaAlunoTask(AlunoDAO daoAluno,
                           TelefoneDAO daoTelefone,
                           Aluno aluno,
                           Telefone telefoneFixo,
                           Telefone telefoneCelular, List<Telefone> telefonesDoAluno,
-                          AlunoEditadoListener listener) {
+                          FinalizadaListener listener) {
+        super(listener);
         this.daoAluno = daoAluno;
         this.daoTelefone = daoTelefone;
         this.aluno = aluno;
         this.telefoneFixo = telefoneFixo;
         this.telefoneCelular = telefoneCelular;
         this.telefonesDoAluno = telefonesDoAluno;
-        this.listener = listener;
     }
 
     @Override
@@ -44,16 +41,6 @@ public class EditaAlunoTask extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
-    @Override
-    protected void onPostExecute(Void unused) {
-        super.onPostExecute(unused);
-        listener.quandoEditado();
-    }
-
-    public interface AlunoEditadoListener {
-        void quandoEditado();
-    }
-
     private void atualizaIdsDosTelefones(Telefone telefoneFixo, Telefone telefoneCelular) {
         for (Telefone telefone : telefonesDoAluno) {
             if (telefone.getTipo() == TipoTelefone.FIXO) {
@@ -61,12 +48,6 @@ public class EditaAlunoTask extends AsyncTask<Void, Void, Void> {
             } else {
                 telefoneCelular.setId(telefoneCelular.getId());
             }
-        }
-    }
-
-    private void vinculaAlunoComTelefone(int idAlunoSalvo, Telefone... telefones) {
-        for (Telefone telefone : telefones) {
-            telefone.setIdAluno(idAlunoSalvo);
         }
     }
 }
